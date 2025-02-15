@@ -21,6 +21,7 @@ def callback_query(call):
     if call.data == "correct":
         bot.answer_callback_query(call.id, "Answer is correct")
         points[call.message.chat.id] += 1
+        call.edit_message_reply_markup()
     elif call.data == "wrong":
         bot.answer_callback_query(call.id,  "Answer is wrong")
 
@@ -36,6 +37,9 @@ def start(message):
     if message.chat.id not in user_responses.keys():
         user_responses[message.chat.id] = 0
         send_question(message.chat.id)
-
+    else:
+        user_responses[message.chat.id] = 0
+        points[message.chat.id] = 0
+        send_question(message.chat.id)
 
 bot.infinity_polling()
