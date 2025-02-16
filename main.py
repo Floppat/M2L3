@@ -18,19 +18,23 @@ def send_question(chat_id):
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
+
+    chat_id = call.message.chat.id
+
     if call.data == "correct":
         bot.answer_callback_query(call.id, "Answer is correct")
-        points[call.message.chat.id] += 1
-        call.edit_message_reply_markup()
+        points[chat_id] += 1
     elif call.data == "wrong":
         bot.answer_callback_query(call.id,  "Answer is wrong")
 
-    user_responses[call.message.chat.id]+=1
+    bot.edit_message_reply_markup(chat_id=chat_id,message_id =call.message.message_id, reply_markup =None)
+
+    user_responses[chat_id]+=1
     
-    if user_responses[call.message.chat.id]>=len(quiz_questions):
-        bot.send_message(call.message.chat.id, f"The end, {points[call.message.chat.id]}/{user_responses[call.message.chat.id]} points")
+    if user_responses[chat_id]>=len(quiz_questions):
+        bot.send_message(chat_id, f"The end, {points[chat_id]}/{user_responses[chat_id]} points")
     else:
-        send_question(call.message.chat.id)
+        send_question(chat_id)
 
 @bot.message_handler(commands=['start'])
 def start(message):
